@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Configures Ubuntu machine to act as a load balancer
+
+# Update packages
+sudo apt -y update
+
+# Enable dedicated PPA
+#sudo apt -y install --no-install-recommends software-properties-common
+#sudo add-apt repository ppa:vbernat/haproxy-2.0
+
+# Install HAproxy
+sudo apt -y install haproxy
+
+# Configure HAproxy
+echo "frontend haproxy-main
+	bind *:80
+	default_backend my_alxservers
+
+backend my_alxservers
+	balance roundrobin
+	server 278314-web-01 54.157.167.250:80 check
+	server 278314-web-02 18.234.105.180:80 check" | sudo tee -a /etc/haproxy/haproxy.cfg
+
+# Restart haproxy
+sudo service haproxy restart
